@@ -37,7 +37,7 @@
 #include <math.h>
 #include <assert.h>
 #include <time.h>
-#include <process.h>
+#include <unistd.h>
 #include <fstream>
 #include "fdtree.h"
 #include "storage.h"
@@ -78,7 +78,7 @@ int fdtree_set_mbuf(int size)
 void fdtree_print(FDTree * tree)
 {
 	printf("\n############ FD-Index ###############\n");
-	printf("Level 0: %d / %d; fid:%d\n", tree->headtree.nBlock, tree->headtree.maxBlock, (int)tree->headtree.fid);
+	printf("Level 0: %d / %d; fid:%d\n", tree->headtree.nBlock, tree->headtree.maxBlock);//, (int)tree->headtree.fid);
 	for (int i = 1; i < tree->nLevel; i++)
 	{
 		printf("Level %d: %d / %d; fid:%d\n", i, tree->levels[i].nBlock, tree->levels[i].maxBlock, (int)tree->levels[i].fid);
