@@ -105,7 +105,7 @@ void Setup(int i)
     a[i]._clocks = 0;
     a[i]._start = 0;
 #ifdef _WIN32
-    QueryPerformanceFrequency((LARGE_INTEGER *)&(a[i]._freq));
+    QueryPerformanceFrequency((long *)&(a[i]._freq));
 #else
     a[i]._freq = 1000;
 #endif
@@ -118,7 +118,7 @@ Start(int i)
 
 #ifdef _WIN32
 
-    QueryPerformanceCounter((LARGE_INTEGER *)&(a[i]._start));
+    QueryPerformanceCounter((long *)&(a[i]._start));
 
 #else
     struct timeval s;
@@ -136,7 +136,7 @@ Stop(int i)
 
 #ifdef _WIN32
 
-    QueryPerformanceCounter((LARGE_INTEGER *)&n);
+    QueryPerformanceCounter((long *)&n);
 
 #else
     struct timeval s;

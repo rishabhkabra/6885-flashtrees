@@ -20,7 +20,7 @@
 #ifndef _STORAGE_H_
 #define _STORAGE_H_
 
-#include <windows.h>
+#include "windows.h"
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -80,7 +80,7 @@ void print_page(Page page);
 //////		File Operations			////////////////
 ////////////////////////////////////////////////////
 
-#define INVALID_FILE_PTR INVALID_HANDLE_VALUE
+#define INVALID_FILE_PTR NULL
 typedef HANDLE FilePtr;
 
 int file_get_new_fid();
