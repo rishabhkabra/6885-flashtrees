@@ -1,0 +1,341 @@
+LA Tree emulation codebase. 
+============================
+
+This is the LA-Tree "release candidate" codebase. It implements the LA-Tree
+over an emulated flash device and artificially constrained memory. It also
+outputs an IO trace that can then be used to run over a real flash device
+through a provided helper program.
+
+This codebase is stand-alone from any other database. Its only job is to feed
+the LA-Tree with a given stream of index operations and output some performance
+metrics. It is a purely sequential implementation. There are no concurrent
+queries at a time and there is no fault recovery/concurrency. 
+
+Differences from the VLDB 2009 LA-Tree codebase:
+=====================================================
+
++ This version supports full-equality queries (as opposed to simply
+existential-equality queries) and hence the numbers obtained by this version
+might be somewhat worse than that reported in the VLDB paper.
+
++ This version does not implement Deletions and does not implement garbage
+collection. That is, this version assumes that we only have three types of
+operations: Range Lookups, Equality Lookups and Insertions. It further assumes
+that the flash size is infinite.
+
+Compiling:
+==========
+
+Just type 'make' in this directory. It produces "lasubtreetest" which is the
+main executable. It also creates two other programs: ssd_reader and
+benchmark_ssd. The former "ssd_reader" runs the (optional) IO trace generated
+by the lasubtreetest over a real block device like an SSD/SD-Card/USB or HDD
+(over any unix file actually). The latter "benchmark_ssd" can be used to
+benchmark an IO device (like HDD/SSD). 
+
+This codebase also includes the Google SparseHash header files which I use for
+implementing my hash tables. You may want to download the original release
+in case the included version gives any problems.
+
+The Makefile has a few important CFlags: 
+
+	-m32 forces 32 bit compilation. I depend on my int's being 4 bytes in size.
+	So this setting should not be touched. 
+
+	-DBIG_KEY_SIZE=1 says that we want big (4 byte) sized keys. (Rid's are
+	always of four bytes). =0 would mean that we have short (2 byte) sized
+	keys. Keys are signed integers. -ve key values have special significance
+	and should not be inserted/looked up.
+
+	-DNO_PRINTF disables debugging output to speed up execution.
+
+How to Run:
+===========
+
+Run "lasubtreetest" on any linux machine. (preferably the same on one on which
+it is compiled). I ran my experiment over a standard linux cluster. 
+
+Here is a description of the arguments and sample arguments:
+
+./lasubtreetest <flashParamFile> <nodeSize> <bufferSize> <numNodesCached> <inputFile> <initialInputFile> <output_file> <seed> <ssdMode> <fanout> <subtreeHeight>
+
+<flashParamFile> describes the flash cost model. Have a look at the enclosed
+"nandFlashRespTimeParams" and "ssdFixedParamsNew" for an example (in the
+flashParmFiles folder). Also look at the function flash.cc:flashLoadCosts to
+understand this file's format. The flash read/seq-write/rand-write is assumed
+to be linear: <fixedCost> + numBytes*<varCostPerByte>.
+
+<nodeSize>: What is the node size of each LA-Tree node in bytes. We used the
+following settings: 132 bytes node size for a 16 (big) keys in a node over a
+raw NAND flash. And, 508 bytes for a page (one page is 512 bytes) sized node
+over an SSD (having 63 keys). A node having K keys has a size (assuming 4 byte
+keys) : K * (4 + 4) + 4. Each node also has a 4 byte header.
+
+<bufferSize>: What is the maximum amount of memory in bytes that should be
+devoted to the LA-Tree buffers. This also bounds the maximum size of the
+buffer. We used 75% of the actual RAM for the <bufferSize>. For example for a
+128KB RAM, I used 96KB of bufferSize. So I gave this parameter as 98304.
+
+<numNodesCached>: How many nodes should we cache in the LRU cache. I gave 25%
+of memory towards the node cache (your mileage would wary). So for a 128KB RAM,
+I used 32KB for the node cache. Dividing that by the node size gives us the
+numNodesCached. So for the 132 byte node size, this gives us 248 nodes that can
+be cached.
+
+<inputFile> can either specify a real filename containing a sequence of index
+operations. Or it can start with the special letter 'X' and . Please have a
+look at index_workload.cc:generateWorkload function to understand the format of
+this 'special' X-filename. (it basically encodes how to generate a uniform key
+distribution with a configurable lookup fraction). 
+
+For example we used: "X550000-100000-0.1-100000-nil" to have a workload having
+550K total operations over a pre-built tree containing 100K keys. The LTU for
+this workload was 10% (so the total number of inserts is 500K). The keys are
+uniformly distributed b/w 0 to 1M. 
+
+<initialInputFile> : Specifies the file containing the initial list of keys to
+be inserted into the tree to pre-load it. Use 'nil' to use the above default
+uniformly distributed keys. 
+
+<output_file>: Output file name -- this file contains the results of the
+simulation. You can parse this file using the enclosed readInFile.rb. The
+format of the output_file can be inferred from last lines in
+index_workload.cc:main and in flash.cc:FlashDump. The total cost (including
+reads and writes) is the last number in the file (the number on the bottom
+right). This number is the total cost (in the units of the flashParamFile). It
+should be divided by the number of index operations to get the 'mean cost per
+operation'. 
+
+<seed>: If you running the LA-Tree multiple times. What is the srand value to
+use. I use seeds as 1,2,3 .. 
+
+<ssdMode>: Set this to 1 if you want to evaluate LA-Tree over a real block
+device like SD-Card/SSD/HDD. Set this to 0 otherwise (for example when
+evaluating over RAW nand flash). Setting this to 1 does two things: (a) Nodes
+are rewritten in place (they are written sequentially out-of-place if this
+ssdMode is turned off). (b) It produces an IO trace which details what
+addresses were read or written -- this IO trace can then be fed into
+"ssd_reader" which actually runs the trace on a given block device.
+
+If this is set to 1, the output costs in the "output_file" are the estimated
+costs based on the SSD cost profile in flashParamFile. Ignore these numbers and
+instead do a real SSD experiment using the IO trace generated.
+
+<fanout>: This corresponds to the node-size chosen above. I used 16 for
+experiments over raw NAND flash and 63 for experiments over a (512 byte linux
+block) SSD. It is the max number of keys that are allowed in a node. 
+
+<subtreeHeight>: At what alternate levels should the buffers be placed. A value
+of 2 means buffers are placed at every alternate nodes. A value of 3 means at
+every 3rd level (from the leaf up). I used a value of 1 for the NAND flash
+experiments and 2 for SSD based experiments. For a discussion on tradeoffs,
+please see the paper. 
+
+Sample run commands: (over 128KB ram)
+-------------------
+
+Over raw NAND flash:
+
+./lasubtreetest flashParamFiles/nandFlashRespTimeParams 132 98304 248 X550000-100000-0.1-100000-nil nil nandFlashResults 1 0 16 1
+
+Over SSD: 
+
+./lasubtreetest flashParamFiles/ssdFixedParamsNew 508 98304 64 X550000-100000-0.1-100000-nil nil ssdFlashResults 1 1 16 2
+
+Feeding in other (non-uniform) workloads: 
+-----------------------------------------
+
+Replace the X... file with a real file name containing two columns. The 2nd
+column is the key, the 1st column is the operation type. See the file
+Tpcc_order for an example (in the sampleDataTraces folder). You may also want
+to feed in real keys for the bulk loading part. See Tpcc_order_preload for an
+example. This file is read by index_workload.cc:readWorkloadLine. The operation
+type is encoded in the enum operation_t.
+
+For example, the run command for the tpcc order table index trace now becomes: 
+
+./lasubtreetest nandFlashRespTimeParams 132 98304 248 sampleDataTraces/Tpcc_order sampleDataTraces/Tpcc_order_preload nandFlashResults 1 0 16 1 
+
+(the seed value is meaningless, as we always feed a given fixed index trace
+into it each time).
+
+Running the IO trace: 
+=====================
+
+Preparing block device: 
+-----------------------
+
+Before describing how to run the IO trace, you must first 'prepare' the device
+by setting appropriate options: 
+
+For example for the block device /dev/sda1 
+
+/sbin/blockdev --setra 0 /dev/sda1 : to disable read ahead, else sequential reads will be unfairly fast.
+
+/sbin/hdparm -W 1 /dev/sda1 : to enable on disk caching. This means different things for different disks.
+Check the hdparm help and the device datasheet. 
+
+(But for my MTRON SSD: This command enabled 'write-back' caching instead of the
+default write-through caching. Setting W 1 drastically improved sequential
+write performance, as without it every single write was going directly to the
+disk. Yes, even sequential writes. ).
+
+The ssd_reader by default enables on disk caching and disables read ahead by
+using these commands. If you don't want that -- then edit the raw_metadata.h 
+
+Running ssd_reader
+--------------------
+
+Now, here is how to run the io trace using the ssd_reader program:
+
+./ssd_reader <rawDisk> <traceFile> <blockSize> <outputFile> <options>
+
+<rawDisk> is the name of block device to run the trace on. For example
+/dev/sda1. You should have appropriate permissions to access this device.
+
+<traceFile> is the name of the io trace file generated by the ./lasubtreetest
+(in the write_metadata.h file). This traceFile does not contain the IO trace of
+the bulk loading phase. Only of the actual index operations.
+
+<blockSize> is the block size to use. I used 512. It should ideally correspond
+to either the linux io block size (512 bytes) or the ssd page size (which is
+unknown for most ssd's). 
+
+<outputFileName> is the output file to produce. Its format is given in the last
+few lines of run_ssd_trace.cc. The bottom left number (1st number on the last
+line) contains the total time taken to run this trace. It should be normalized
+by the number of index operations to report the mean cost per operation. The
+first output line gives statistics on number of rand/seq read/writes. 
+
+Where the <options> (at the end) are: 
+
+-d : Don't do direct IO (it does direct io by default). On doing direct io, we
+bypass the kernel's buffer cache and every io request hits the device. This
+does not prevent caching on the SSD. Although for the MTRON 7500 PRO SSD we tried, it did not
+seem to have any read cache and only a very small (1-2 blocks only) of write
+cache.
+
+-i : Ask for confirmation before starting the trace. Not sure how this is useful. Never used it.
+
+-t <outputTrace> : Don't do any actual IO. Generates a new trace that just logs
+each 'fictional' IO. Only useful for debugging, so ignore it.
+
+-r : don't just run the io trace directly -- pass it through another log and
+then do the filtered io. I didn't use this.
+
+So the run command I used for this is:
+
+./ssd_reader /dev/sda1 ioTraceFileName 512 outputFileName (no other options).
+
+run_ssd_trace.cc is just a front end to raw_metadata.h. It basically sets up
+the block device (sets its options etc) and uses raw_metadata.h to actually
+implement the log logic and do the io on the device.
+
+
+Benchmarking the flash device:
+==============================
+
+Benchmarking a (block) flash device is important to understand its behaviour.
+The current LA-Tree implementation relies on accurate profiling to correctly
+estimate the costs (which are used by its adaptive buffer size control
+algorithm). This is exactly what the flashParamFile is meant for. You should
+create this file by hand for every new flash device you want to run the LA-Tree
+on. If this profiling is inaccurate, then LA-Tree's real performance (as
+obtained by running the IO trace) will necessarily be sub-optimal.
+
+Please look at the benchmark_ssd.cc file to exactly understand what each
+benchmark test does. Usually you can just trust the test description. 
+
+Running options: 
+
+-d : Don't do direct io (does direct io by default to bypass kernel buffer cache)
+
+-t <disk>: By default disk is set to /dev/sdb, use this parameter to change the block device to benchmark.
+
+-o <blockSize>: The default block size is 512. Use this parameter to change the
+block size. Usually set to a multiple of 512, like 4096.
+
+-r : Enables read ahead. This unfairly improves sequential read performance
+
+-w : Disables write caching, which for my SSD meant that it enables
+write-through caching. This severely hurts sequential write performance, making
+sequential writes as bad as random writes. 
+
+So, for my SSD, I used the run command: 
+
+' ./benchmark_ssd -t /dev/sda1 ', to benchmark it.
+
+Once that is done you can create (or hack the ssdFixedParamsNew) a new flashParamFile. 
+
+for example, for my SSD, the profiling numbers told me:
+
+	+ Sequential Write : 73 us per 512 byte block write.
+	+ Random Read: 100 us per 512 byte block read.
+	+ Random Write: 8600 us per 512 byte block read.
+	+ Random reads: 280 us per 512 bye block read. 
+
+The LA-Tree uses these profiling numbers as follows: 
+
+	+ Random reads to estimate the cost of reading the subtree.
+	+ Random reads to estimate the cost of reading the buffer (buffer fragments are scattered around the flash).
+	+ Random writes to estimate cost of writing the subtree (nodes are rewritten in place on a ssd).
+
+So, in ssdFixedParamsNew: the fixedwrite = sequential write cost. fixedread =
+random read cost. randwritefixed = 8600.
+
+[For SSD's (or other block devices) -- variable costs don't make much sense
+(since we can't write byte at a time, the whole block is read as a whole). So
+in our ssdFixedParamsNew, we set the variable costs to zero.]
+
+Brief description of the source code:
+=====================================
+
+index_workload.cc implements the main function which creates the LA-Tree, does
+index operations on it and dumps the statistics to a file. 
+
+flash_split_up_bplustree.cc contains the underlying B+ tree used the La-Tree. 
+
+subtree_tree.cc implements almost the entire LA-Tree logic. It ties together
+the B+ tree node logic with the buffers. 
+
+list_buffer.cc implements the buffer and the buffer memory control logic and the write coalescing buffer pool. 
+
+--
+Special note on buffer implementation: Buffers in the LA-Tree are emulated.
+Which means that they are not really written to the flash but exist in the form
+of in-memory chains of buffer deltas. Where a delta consists of key and rid.
+There is additional metadata to maintain the buffer fragments corresponding to
+each fragment. Each fragment has a header that points to the next fragment
+(reverse linked list on flash).
+
+Having said that, I have made absolute care to ensure that the accounting of
+costs is kosher. This should ensure that as far as the numbers are concerned --
+the higher layers see the same buffer behaviour as if it was actually written
+and read from flash.
+--
+
+write_metadata.h implements the sequentially written log that is shared by both
+nodes and buffers.
+
+ftl_hash.cc implements the FTL. Only used (or only useful) for a raw NAND flash
+where node rewrites are not allowed. It maps node ids to flash addresses.
+
+rooted_bplus_tree_index.cc is a simple wrapper around the
+flash_split_up_bplustree.cc. The subtree_tree.cc talks to
+flash_split_up_bplustree.cc via this (and via the 'virtual functions' defined
+in tree_func.h.
+
+bmgr.cc implements an LRU based memory object pool. It is used by the
+node_cache to implement the LRU node cache.
+
+node_cache.cc ties together the FTL and the LRU node cache to provide a simple
+interface to get/release nodes that the flash_split_up_bplustree.cc uses. Thus,
+flash_split_up_bplustree.cc can pretend as if all nodes were in memory and rely
+on node_cache to swap them in and out of flash.
+
+flash.cc implements the emulated flash and takes care of costing things
+appropriately.
+
+-Devesh Agrawal
+October 6, 2009.
+Dept of CS, UMass Amherst.

@@ -1,0 +1,1 @@
+pagesize: 512, ebnumpages: 32, fixedwrite: 73, fixedread: 100, varwrite: 0, varread: 0, eraseblock: 1, randwritefixed: 8600, randwritevar: 0
