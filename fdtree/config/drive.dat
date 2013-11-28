@@ -1,0 +1,5 @@
+#mtron
+rndread:	17000000
+seqread:	80000000
+rndwrite:	420000
+seqwrite:	72000000
