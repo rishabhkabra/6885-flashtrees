@@ -84,23 +84,18 @@ int file_close(FilePtr fhdl)
 
 void file_seek(FilePtr fhdl, long long offset)
 {
-	LARGE_INTEGER   seek;
-	LARGE_INTEGER   toss;
-	seek.QuadPart = offset;
-	seek.QuadPart = seek.QuadPart * BLKSZ;
-	if  (!SetFilePointerEx(fhdl, seek, &toss, FILE_BEGIN))
-	  {
-	    elog(ERROR, "ERROR: SetFilePointerEx failed (error=%d)\n");//, GetLastError());
-	    exit(1);
-	  }
+  if (lseek(fhdl, offset, SEEK_SET) == -1)
+    {
+      elog(ERROR, "ERROR: SetFilePointerEx failed (error=%d)\n");//, GetLastError());
+      exit(1);
+    }
 }
 
 DWORD file_read(FilePtr fhdl, Page buffer, long num)
 {
-	BOOL e;
 	DWORD nread;
-	e = ReadFile(fhdl, buffer, num, &nread, NULL);
-	if (!e)
+	nread = read(fhdl, buffer, num);
+	if (nread == -1)
 	{
 	  elog(ERROR, "ERROR: FileRead I/O failed, winerr=%d\n");//, GetLastError());
 	  exit(1);
@@ -110,38 +105,19 @@ DWORD file_read(FilePtr fhdl, Page buffer, long num)
 
 DWORD file_write(FilePtr fhdl, Page buffer, long num)
 {
-	BOOL e;
-	DWORD nread;
-	e = WriteFile(fhdl, buffer, num, &nread, NULL);
-	if (!e && nread != num)
+	DWORD nwrite;
+	nwrite = write(fhdl, buffer, num);
+	if (nwrite == -1 || nwrite != num)
 	{
 	  elog(ERROR, "ERROR: FileWrite I/O failed, winerr=%d\n");//, GetLastError());
 	  exit(1);
 	}
-	return nread;
-}
-
-DWORD file_tryWrite(FilePtr fhdl, Page buffer, long num)
-{
-	BOOL e;
-	DWORD nread;
-	e = WriteFile(fhdl, buffer, num, &nread, NULL);
-	if (!e && nread != num)
-	{
-		return 0;
-	}
-	return nread;
+	return nwrite;
 }
 
 void file_flush(FilePtr fhdl)
 {
-	BOOL e;
-	e = FlushFileBuffers(fhdl);
-	if (!e)
-	{
-	  elog(ERROR, "ERROR: FileFlush I/O failed, winerr=%d\n");//, GetLastError());
-	  exit(1);
-	}
+  fclean(fhdl);
 }
 
 void file_delete(FilePtr fhdl, int fid)
@@ -155,7 +131,7 @@ void file_delete(FilePtr fhdl, int fid)
 	  exit(1);
 	}
 	
-	if (DeleteFile(path) == 0)
+	if (unlink(path) != 0)
 	  {
 	    elog(ERROR, "ERROR: FileFlush I/O failed, winerr=%d\n");//, GetLastError());
 	    exit(1);
