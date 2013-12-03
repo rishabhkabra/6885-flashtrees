@@ -53,6 +53,7 @@ FilePtr file_open(int fid, bool isExist)
 	
 	std::fstream fs;
 	fs.open(path, std::fstream::in | std::fstream::out);
+	printf("opened file: %s\n", path);
 	return &fs;
 	/* HANDLE fhdl = CreateFileA( path,
 				   GENERIC_READ | GENERIC_WRITE,
@@ -106,18 +107,24 @@ FilePtr file_reopen(int fid)
 */
 void file_seek(FilePtr fhdl, long long offset)
 {
-	long   seek;
-	//long   toss;
-	seek = offset * BLKSZ;
-	fhdl->seekp(seek);
-	fhdl->seekg(seek);
-	/*
-	if  (!SetFilePointerEx(fhdl, seek, &toss, FILE_BEGIN))
-	{
-		elog(ERROR, "ERROR: SetFilePointerEx failed (error=%d)\n", GetLastError());
-		exit(1);
-	}
-	*/
+  printf("file_seek(%p)\n", fhdl);
+  long   seek;
+  //long   toss;
+  seek = offset * BLKSZ;
+  if (seek == 0) {
+    return;
+  }
+  printf("seeking offset %ld... ", seek);
+  fhdl->seekp(seek);
+  fhdl->seekg(seek);
+  printf("successfully seeked.\n");
+  /*
+    if  (!SetFilePointerEx(fhdl, seek, &toss, FILE_BEGIN))
+    {
+    elog(ERROR, "ERROR: SetFilePointerEx failed (error=%d)\n", GetLastError());
+    exit(1);
+    }
+  */
 }
 
 /*
