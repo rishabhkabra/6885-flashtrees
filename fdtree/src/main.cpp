@@ -693,47 +693,47 @@ int main( int argc,char* argv[])
 	srand(time(NULL));
 	for (i = 1; i < argc; i++)
 	{
-		if (_strcmpi(argv[i], "-c") == 0 || _strcmpi(argv[i], "--cardinality") == 0)
+		if (strcmp(argv[i], "-c") == 0 || strcmp(argv[i], "--cardinality") == 0)
 			n = getArguVal(argv[++i]);
-		else if (_strcmpi(argv[i], "-b") == 0 || _strcmpi(argv[i], "--buffer") == 0)
+		else if (strcmp(argv[i], "-b") == 0 || strcmp(argv[i], "--buffer") == 0)
 			b = getArguVal(argv[++i]);
-		else if (_strcmpi(argv[i], "-p") == 0 || _strcmpi(argv[i], "--path") == 0)
+		else if (strcmp(argv[i], "-p") == 0 || strcmp(argv[i], "--path") == 0)
 			strcpy(DATAPATH, argv[++i]);
-		else if (_strcmpi(argv[i], "-d") == 0 || _strcmpi(argv[i], "--drive") == 0)
+		else if (strcmp(argv[i], "-d") == 0 || strcmp(argv[i], "--drive") == 0)
 			strcpy(DEVICEPATH, argv[++i]);
-		else if (_strcmpi(argv[i], "-f") == 0 || _strcmpi(argv[i], "--loadfile") == 0)
+		else if (strcmp(argv[i], "-f") == 0 || strcmp(argv[i], "--loadfile") == 0)
 		{	
 			loadfile = new char[256];
 			strcpy(loadfile, argv[++i]);
 		}
-		else if (_strcmpi(argv[i], "-q") == 0 || _strcmpi(argv[i], "--queryfile") == 0)
+		else if (strcmp(argv[i], "-q") == 0 || strcmp(argv[i], "--queryfile") == 0)
 		{	
 			queryfile = new char[256];
 			strcpy(queryfile, argv[++i]);
 		}
-		else if (_strcmpi(argv[i], "-n") == 0 || _strcmpi(argv[i], "--nquery") == 0)
+		else if (strcmp(argv[i], "-n") == 0 || strcmp(argv[i], "--nquery") == 0)
 			num_query = getArguVal(argv[++i]);
-		else if (_strcmpi(argv[i], "-r") == 0 || _strcmpi(argv[i], "--rate") == 0)
+		else if (strcmp(argv[i], "-r") == 0 || strcmp(argv[i], "--rate") == 0)
 		{
 			p_search = atoi(argv[++i]);
 			p_insert = atoi(argv[++i]);
 			p_delete = atoi(argv[++i]);
 			p_update = atoi(argv[++i]);
 		}
-		else if (_strcmpi(argv[i], "-e") == 0)
+		else if (strcmp(argv[i], "-e") == 0)
 		{
 			i++;
-			if (_strcmpi(argv[i], "ERROR") == 0)
+			if (strcmp(argv[i], "ERROR") == 0)
 				ELOG_LEVEL = ERROR;
-			else if (_strcmpi(argv[i], "WARNING") == 0)
+			else if (strcmp(argv[i], "WARNING") == 0)
 				ELOG_LEVEL = WARNING;
-			else if (_strcmpi(argv[i], "INFO") == 0)
+			else if (strcmp(argv[i], "INFO") == 0)
 				ELOG_LEVEL = INFO;
-			else if (_strcmpi(argv[i], "DEBUG1") == 0)
+			else if (strcmp(argv[i], "DEBUG1") == 0)
 				ELOG_LEVEL = DEBUG1;
-			else if (_strcmpi(argv[i], "DEBUG2") == 0)
+			else if (strcmp(argv[i], "DEBUG2") == 0)
 				ELOG_LEVEL = DEBUG2;
-			else if (_strcmpi(argv[i], "DEBUG3") == 0)
+			else if (strcmp(argv[i], "DEBUG3") == 0)
 				ELOG_LEVEL = DEBUG3;
 			else
 			{
@@ -741,26 +741,26 @@ int main( int argc,char* argv[])
 				goto reinput;
 			}
 		}
-		else if (_strcmpi(argv[i], "-l") == 0 || _strcmpi(argv[i], "--level") == 0)
+		else if (strcmp(argv[i], "-l") == 0 || strcmp(argv[i], "--level") == 0)
 			l = atoi(argv[++i]);
-		else if (_strcmpi(argv[i], "-k") == 0)
+		else if (strcmp(argv[i], "-k") == 0)
 			k = atoi(argv[++i]);
-		else if (_strcmpi(argv[i], "-i") == 0 || _strcmpi(argv[i], "--index") == 0)
+		else if (strcmp(argv[i], "-i") == 0 || strcmp(argv[i], "--index") == 0)
 		{
 			i++;
-			if (_strcmpi(argv[i], "fdtree") == 0)
+			if (strcmp(argv[i], "fdtree") == 0)
 				index = 0;
-			else if (_strcmpi(argv[i], "btree") == 0)
+			else if (strcmp(argv[i], "btree") == 0)
 				index = 1;
 			else
 				goto reinput;
 		}
-		else if (_strcmpi(argv[i], "-h") == 0 || _strcmpi(argv[i], "--help") == 0)
+		else if (strcmp(argv[i], "-h") == 0 || strcmp(argv[i], "--help") == 0)
 		{
 				help();
 				return 0;
 		}
-		else if (_strcmpi(argv[i], "-v") == 0 || _strcmpi(argv[i], "--version") == 0)
+		else if (strcmp(argv[i], "-v") == 0 || strcmp(argv[i], "--version") == 0)
 		{
 				version();
 				return 0;
