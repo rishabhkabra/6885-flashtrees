@@ -869,7 +869,7 @@ int btree_delete(BTree * tree, Entry entry)
 	Page page;
 	BlockNum pid = tree->root;
 	
-	assert(tree->fhdl != INVALID_HANDLE_VALUE);
+	//assert(tree->fhdl != INVALID_HANDLE_VALUE);
 
 	for (int i = 0; i < tree->nLevel - 1; i++)
 	{
