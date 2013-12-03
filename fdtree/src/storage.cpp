@@ -18,6 +18,7 @@
  */
 
 #include <fcntl.h>
+#include <unistd.h>
 #include "storage.h"
 #include "error.h"
 
@@ -73,14 +74,15 @@ FilePtr file_open(int fid, bool isExist)
 
 int file_close(FilePtr fhdl)
 {
-	if (CloseHandle(fhdl) == 0)
-	{
-		elog(ERROR, "ERROR: FileFlush I/O failed, winerr=%d\n", GetLastError());
-		exit(1);
+	if (close(fhdl) != 0)
+	  {
+	  elog(ERROR, "ERROR: FileFlush I/O failed, winerr=%d\n");//, GetLastError());
+	  exit(1);
 	}
 	return 1;
 }
 
+/*
 FilePtr file_reopen(int fid)
 {
 	char path[256];
@@ -106,6 +108,7 @@ FilePtr file_reopen(int fid)
     }
 	return hdl;
 }
+*/
 
 void file_seek(FilePtr fhdl, long long offset)
 {

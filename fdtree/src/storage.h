@@ -85,7 +85,7 @@ typedef HANDLE FilePtr;
 
 int file_get_new_fid();
 FilePtr file_open(int fid, bool isExist);
-FilePtr file_reopen(int fid);
+//FilePtr file_reopen(int fid);
 int file_close(FilePtr fhdl);
 void file_seek(FilePtr fhdl, long long offset);
 bool file_trySeek(FilePtr fhdl, long long offset);
