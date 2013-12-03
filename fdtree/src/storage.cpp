@@ -49,15 +49,19 @@ FilePtr file_open(int fid, bool isExist)
 	char path[256];
 	sprintf(path, "%s/%d.dat", DATAPATH, fid);
 	printf("opening file %s\n", path);
-	//int openflag = isExist? OPEN_EXISTING:OPEN_ALWAYS;
-	int flags = O_RDWR | O_DIRECT;
-	if (!isExist) {
-	  flags |= O_CREAT;
+	
+	HANDLE fhdl;
+	if (isExist) {
+	  fhdl = open(path, O_RDWR | O_DIRECT);
+	} 
+	else {
+	  fhdl = open(path, O_DIRECT | O_CREAT, 0644);
 	}
+
 	//unsigned int fflag = 0;
 	//fflag |= FILE_FLAG_NO_BUFFERING|FILE_FLAG_WRITE_THROUGH;
 	
-	HANDLE fhdl = open(path, flags);
+	//HANDLE fhdl = open(path, flags, 0644); //O_RDWR | O_CREAT, 0644);//flags);
 
 	/*
 	HANDLE fhdl = CreateFileA( path,
