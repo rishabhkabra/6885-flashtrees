@@ -19,6 +19,7 @@
 
 #include <assert.h>
 #include <fstream>
+#include <cstring>
 #include "storage.h"
 #include "btree.h"
 #include "buffer.h"
