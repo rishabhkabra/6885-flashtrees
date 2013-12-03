@@ -22,6 +22,7 @@
 #include <assert.h>
 #include <unistd.h>
 #include <fstream>
+#include <cstring>
 #include "storage.h"
 #include "btree.h"
 #include "fdtree.h"

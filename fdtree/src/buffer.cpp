@@ -33,6 +33,7 @@
  */
 
 #include <assert.h>
+#include <cstring>
 #include "storage.h"
 #include "lruque.h"
 #include "pageTable.h"
