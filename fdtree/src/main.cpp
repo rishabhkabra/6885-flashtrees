@@ -56,16 +56,22 @@ void fdtree_test(int n, int buffer_size, int l, int k, int num_query, int p_sear
 
 	if (k == 0)
 	{
-		if (l == 0)
-			k =	fdmodel_estimate(n, buffer_size, p_insert/100.0, DEVICEPATH);
-		else
-			k = (int)(ceil(pow(((n+100000)/PAGE_MAX_NUM(Entry))/HEADTREE_PAGES_BOUND, 1.0/(l - 1))));
+	  if (l == 0){
+	    k =	fdmodel_estimate(n, buffer_size, p_insert/100.0, DEVICEPATH);
+	    printf("k estimated using model: %d\n", k);
+	  }
+	  else {
+	    k = (int)(ceil(pow(((n+100000)/PAGE_MAX_NUM(Entry))/HEADTREE_PAGES_BOUND, 1.0/(l - 1))));
+	    printf("n: %d, PAGE_MAX_NUM: %d, HEADTREE_PAGES_BOUND: %d, k calculated using formula: %d\n", n, PAGE_MAX_NUM(Entry), HEADTREE_PAGES_BOUND, k);
+	  }
 	}
 
 	if (k >= PAGE_MAX_NUM(Entry))
 	{
-		elog(ERROR, "bad parameter l: please increase the value of l.\n");
-		return;
+	  printf("k: %d\n", k);
+	  printf("PAGE_MAX_NUM: %d\n", PAGE_MAX_NUM(Entry));
+	  elog(ERROR, "bad parameter l: please increase the value of l.\n");
+	  return;
 	}
 
 	elog(DEBUG1, "initialize buffer pool...\n");

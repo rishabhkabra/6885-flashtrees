@@ -845,10 +845,14 @@ FDTree * fdtree_bulkload(unsigned int num, int k, char * fname)
 	int nHeadTreeEntry = (HEADTREE_PAGES_BOUND - 1) * PAGE_MAX_NUM(Entry);
 	tree->n = num;
 	tree->k = k;
-	tree->nLevel = (int)ceil(log(double(num)/nHeadTreeEntry)/log(double(k))) + 1;
+	printf("num: %d, nHeadTreeEntry: %d, k: %d\n", num, nHeadTreeEntry, k);
+	tree->nLevel = (int) ceil(log(double(num) / nHeadTreeEntry) / log(double(k))) + 1;
 
-	if (tree->nLevel < 2)
-		tree->nLevel = 2;
+	if (tree->nLevel < 2) {
+	  tree->nLevel = 2;
+	}
+	printf("tree->nLevel: %d\n", tree->nLevel);
+	printf("MAX_LEVELS: %d\n", MAX_LEVELS);
 	assert(tree->nLevel < MAX_LEVELS);
 
 	/*
