@@ -23,7 +23,7 @@
 #include "storage.h"
 #include "error.h"
 #ifdef __APPLE__
-#define O_DIRECT 1
+#define O_DIRECT -1
 #endif
 
 //data path for storing data
@@ -51,12 +51,14 @@ FilePtr file_open(int fid, bool isExist)
 	printf("opening file %s\n", path);
 	
 	HANDLE fhdl;
+	//FILE* fp = fopen(path, "r");
+	
 	if (isExist) {
-	  fhdl = open(path, O_RDWR | O_DIRECT);
+	  fhdl = open(path, O_RDWR);// | O_DIRECT);
 	} 
 	else {
-	  fhdl = open(path, O_DIRECT | O_CREAT, 0644);
-	}
+	  fhdl = open(path,  O_CREAT | O_RDWR, S_IRWXU | S_IRWXG | S_IRWXO);	  
+	  }
 
 	//unsigned int fflag = 0;
 	//fflag |= FILE_FLAG_NO_BUFFERING|FILE_FLAG_WRITE_THROUGH;
@@ -102,6 +104,7 @@ void file_seek(FilePtr fhdl, long long offset)
 DWORD file_read(FilePtr fhdl, Page buffer, long num)
 {
 	DWORD nread;
+
 	nread = read(fhdl, buffer, num);
 	if (nread == -1)
 	{
