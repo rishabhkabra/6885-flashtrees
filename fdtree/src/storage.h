@@ -88,12 +88,12 @@ FilePtr file_open(int fid, bool isExist);
 //FilePtr file_reopen(int fid);
 int file_close(FilePtr fhdl);
 void file_seek(FilePtr fhdl, long long offset);
-bool file_trySeek(FilePtr fhdl, long long offset);
+//bool file_trySeek(FilePtr fhdl, long long offset);
 DWORD file_read(FilePtr fhdl, Page buffer, long num);
 DWORD file_write(FilePtr fhdl, Page buffer, long num);
 void file_flush(FilePtr fhdl);
 BOOL file_clearDataDir();
 void file_delete(FilePtr fhdl, int fid);
-void file_delete(FilePtr fhdlr, FilePtr fhdls, int fid);
+//void file_delete(FilePtr fhdlr, FilePtr fhdls, int fid);
 
 #endif
