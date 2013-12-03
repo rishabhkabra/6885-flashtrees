@@ -51,9 +51,9 @@ FilePtr file_open(int fid)//, bool isExist)
 	unsigned int fflag = 0;
 	//fflag |= FILE_FLAG_NO_BUFFERING|FILE_FLAG_WRITE_THROUGH;
 	
-	FilePtr fs;
+	std::fstream fs;
 	fs.open(path, std::fstream::in | std::fstream::out);
-	return fs;
+	return &fs;
 	/* HANDLE fhdl = CreateFileA( path,
 				   GENERIC_READ | GENERIC_WRITE,
 				   FILE_SHARE_READ,
@@ -65,12 +65,11 @@ FilePtr file_open(int fid)//, bool isExist)
 	  elog(ERROR, "ERROR: FileOpen failed (error=%d)\n", GetLastError());
 	  exit(1);
 	}*/
-	return fs;
 }
 
 int file_close(FilePtr fhdl)
 {
-  fhdl.close(); /*
+  fhdl->close(); /*
 	if (CloseHandle(fhdl) == 0)
 	{
 		elog(ERROR, "ERROR: FileFlush I/O failed, winerr=%d\n", GetLastError());
@@ -110,8 +109,8 @@ void file_seek(FilePtr fhdl, long long offset)
 	long   seek;
 	//long   toss;
 	seek = offset * BLKSZ;
-	fhdl.seekp(seek);
-	fhdl.seekg(seek);
+	fhdl->seekp(seek);
+	fhdl->seekg(seek);
 	/*
 	if  (!SetFilePointerEx(fhdl, seek, &toss, FILE_BEGIN))
 	{
@@ -143,7 +142,7 @@ DWORD file_read(FilePtr fhdl, Page buffer, long num)
 {
   //BOOL e;
   DWORD nread;
-  fhdl.read(buffer, num);
+  fhdl->read(buffer, num);
   /*
     e = ReadFile(fhdl, buffer, num, &nread, NULL);
     if (!e)
@@ -159,7 +158,7 @@ DWORD file_write(FilePtr fhdl, Page buffer, long num)
 {
   //BOOL e;
   DWORD nread;
-  fhdl.write(buffer, num);
+  fhdl->write(buffer, num);
   /*
   e = WriteFile(fhdl, buffer, num, &nread, NULL);
   if (!e && nread != num)
@@ -188,7 +187,7 @@ DWORD file_tryWrite(FilePtr fhdl, Page buffer, long num)
 void file_flush(FilePtr fhdl)
 {
 	BOOL e;
-	fflush(fhdl);
+	fhdl->flush();
 	/*
 	e = FlushFileBuffers(fhdl);
 	if (!e)
