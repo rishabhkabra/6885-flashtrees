@@ -19,8 +19,12 @@
 
 #include <fcntl.h>
 #include <unistd.h>
+#include <cstdio>
 #include "storage.h"
 #include "error.h"
+#ifdef __APPLE__
+#define O_DIRECT 1
+#endif
 
 //data path for storing data
 char DATAPATH[256] = "data";
@@ -117,7 +121,7 @@ DWORD file_write(FilePtr fhdl, Page buffer, long num)
 
 void file_flush(FilePtr fhdl)
 {
-  fclean(fhdl);
+  //fclean(fhdl);
 }
 
 void file_delete(FilePtr fhdl, int fid)
@@ -141,6 +145,7 @@ void file_delete(FilePtr fhdl, int fid)
 
 BOOL file_clearDataDir() 
 {  
+  /*
 	WIN32_FIND_DATA finddata;  
 	HANDLE hfind;
 	int fid;
@@ -182,6 +187,6 @@ BOOL file_clearDataDir()
 	//	return TRUE;
 	//else
 	//	return FALSE;
-
-	return TRUE;
+	*/
+	return 1;
 }
