@@ -27,7 +27,7 @@
 #endif
 
 //data path for storing data
-char DATAPATH[256] = "data";
+char DATAPATH[256] = "../data";
 
 int file_get_new_fid()
 {
@@ -47,8 +47,8 @@ void print_page(Page page)
 FilePtr file_open(int fid, bool isExist)
 {
 	char path[256];
-	sprintf(path, "%s\\%d.dat", DATAPATH, fid);
-	
+	sprintf(path, "%s/%d.dat", DATAPATH, fid);
+	printf("opening file %s\n", path);
 	//int openflag = isExist? OPEN_EXISTING:OPEN_ALWAYS;
 	int flags = O_RDWR | O_DIRECT;
 	if (!isExist) {
@@ -127,7 +127,7 @@ void file_flush(FilePtr fhdl)
 void file_delete(FilePtr fhdl, int fid)
 {
 	char path[256];
-	sprintf(path, "%s//%d.dat", DATAPATH, fid);
+	sprintf(path, "%s/%d.dat", DATAPATH, fid);
 
 	if (close(fhdl) != 0)
 	{
@@ -170,7 +170,7 @@ BOOL file_clearDataDir()
 			continue;
 
 		pdir = new char[strlen(path) + strlen(finddata.cFileName) + 2];  
-		sprintf(pdir,"%s\\%s",path,finddata.cFileName);		
+		sprintf(pdir,"%s/%s",path,finddata.cFileName);		
 
 		//if (strcmp(finddata.cFileName,".") == 0 || strcmp(finddata.cFileName,"..") == 0)  
 		//{
