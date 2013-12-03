@@ -41,7 +41,7 @@ void print_page(Page page)
 	printf("\n");
 }
 
-FilePtr file_open(int fid)//, bool isExist)
+FilePtr file_open(int fid, bool isExist)
 {
 	char path[256];
 	sprintf(path, "%s\\%d.dat", DATAPATH, fid);
