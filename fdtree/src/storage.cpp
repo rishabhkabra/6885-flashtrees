@@ -17,6 +17,7 @@
  *-------------------------------------------------------------------------
  */
 
+#include <fcntl.h>
 #include "storage.h"
 #include "error.h"
 
@@ -43,11 +44,17 @@ FilePtr file_open(int fid, bool isExist)
 	char path[256];
 	sprintf(path, "%s\\%d.dat", DATAPATH, fid);
 	
-	int openflag = isExist? OPEN_EXISTING:OPEN_ALWAYS;
-
-	unsigned int fflag = 0;
-	fflag |= FILE_FLAG_NO_BUFFERING|FILE_FLAG_WRITE_THROUGH;
+	//int openflag = isExist? OPEN_EXISTING:OPEN_ALWAYS;
+	int flags = O_RDWR | O_DIRECT;
+	if (!isExist) {
+	  flags |= O_CREAT;
+	}
+	//unsigned int fflag = 0;
+	//fflag |= FILE_FLAG_NO_BUFFERING|FILE_FLAG_WRITE_THROUGH;
 	
+	HANDLE fhdl = open(path, flags);
+
+	/*
 	HANDLE fhdl = CreateFileA( path,
                             GENERIC_READ | GENERIC_WRITE,
                             FILE_SHARE_READ,
@@ -55,11 +62,12 @@ FilePtr file_open(int fid, bool isExist)
                             openflag,
                             fflag,
                             NULL);
+	*/
 	if  (fhdl == INVALID_HANDLE_VALUE)
-    {
-		elog(ERROR, "ERROR: FileOpen failed (error=%d)\n", GetLastError());
-        exit(1);
-    }
+	  {
+	    elog(ERROR, "ERROR: FileOpen failed (error=%d)\n");//, GetLastError());
+	    exit(1);
+	  }
 	return fhdl;
 }
 
