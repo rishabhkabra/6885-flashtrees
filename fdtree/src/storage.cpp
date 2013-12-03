@@ -19,6 +19,9 @@
 
 #include "storage.h"
 #include "error.h"
+#include <fstream>
+#include <stdio.h>
+using namespace std;
 
 //data path for storing data
 char DATAPATH[256] = "data";
@@ -38,51 +41,54 @@ void print_page(Page page)
 	printf("\n");
 }
 
-FilePtr file_open(int fid, bool isExist)
+FilePtr file_open(int fid)//, bool isExist)
 {
 	char path[256];
 	sprintf(path, "%s\\%d.dat", DATAPATH, fid);
 	
-	int openflag = isExist? OPEN_EXISTING:OPEN_ALWAYS;
+	//int openflag = isExist? OPEN_EXISTING:OPEN_ALWAYS;
 
 	unsigned int fflag = 0;
-	fflag |= FILE_FLAG_NO_BUFFERING|FILE_FLAG_WRITE_THROUGH;
+	//fflag |= FILE_FLAG_NO_BUFFERING|FILE_FLAG_WRITE_THROUGH;
 	
-	HANDLE fhdl = CreateFileA( path,
-                            GENERIC_READ | GENERIC_WRITE,
-                            FILE_SHARE_READ,
-                            NULL,
-                            openflag,
-                            fflag,
-                            NULL);
-	if  (fhdl == INVALID_HANDLE_VALUE)
-    {
-		elog(ERROR, "ERROR: FileOpen failed (error=%d)\n", GetLastError());
-        exit(1);
-    }
-	return fhdl;
+	FilePtr fs;
+	fs.open(path, std::fstream::in | std::fstream::out);
+	return fs;
+	/* HANDLE fhdl = CreateFileA( path,
+				   GENERIC_READ | GENERIC_WRITE,
+				   FILE_SHARE_READ,
+				   NULL,
+				   openflag,
+				   fflag,
+				   NULL);
+	if  (fhdl == INVALID_HANDLE_VALUE) {
+	  elog(ERROR, "ERROR: FileOpen failed (error=%d)\n", GetLastError());
+	  exit(1);
+	}*/
+	return fs;
 }
 
 int file_close(FilePtr fhdl)
 {
+  fhdl.close(); /*
 	if (CloseHandle(fhdl) == 0)
 	{
 		elog(ERROR, "ERROR: FileFlush I/O failed, winerr=%d\n", GetLastError());
 		exit(1);
-	}
+		} */
 	return 1;
 }
-
+/*
 FilePtr file_reopen(int fid)
 {
 	char path[256];
 	sprintf(path, "%s//%d.dat", DATAPATH, fid);
 
 
-	int openflag = OPEN_EXISTING;
+	//int openflag = OPEN_EXISTING;
 
 	unsigned int fflag = 0;
-	fflag |= FILE_FLAG_NO_BUFFERING|FILE_FLAG_WRITE_THROUGH;
+	//fflag |= FILE_FLAG_NO_BUFFERING|FILE_FLAG_WRITE_THROUGH;
 
 	HANDLE hdl = CreateFileA( path,
                             GENERIC_READ,
@@ -98,58 +104,74 @@ FilePtr file_reopen(int fid)
     }
 	return hdl;
 }
-
+*/
 void file_seek(FilePtr fhdl, long long offset)
 {
-	LARGE_INTEGER   seek;
-	LARGE_INTEGER   toss;
-	seek.QuadPart = offset;
-	seek.QuadPart = seek.QuadPart * BLKSZ;
+	long   seek;
+	//long   toss;
+	seek = offset * BLKSZ;
+	fhdl.seekp(seek);
+	fhdl.seekg(seek);
+	/*
 	if  (!SetFilePointerEx(fhdl, seek, &toss, FILE_BEGIN))
 	{
 		elog(ERROR, "ERROR: SetFilePointerEx failed (error=%d)\n", GetLastError());
 		exit(1);
 	}
+	*/
 }
 
+/*
 bool file_trySeek(FilePtr fhdl, long long offset)
 {
-	LARGE_INTEGER   seek;
-	LARGE_INTEGER   toss;
-	seek.QuadPart = offset;
-	seek.QuadPart = seek.QuadPart * BLKSZ;
-	if  (!SetFilePointerEx(fhdl, seek, &toss, FILE_BEGIN))
-		return false;
-	else
-		return true;
+	long   seek;
+	//long   toss;
+	seek = offset * BLKSZ;
+	fhdl.seekp(seek);
+	fhdl.seekg(seek);
+	if  (!SetFilePointerEx(fhdl, seek, &toss, FILE_BEGIN)) {
+	  return false;
+	}
+	else {
+	  return true;
+	}
+	
 }
+*/
 
 DWORD file_read(FilePtr fhdl, Page buffer, long num)
 {
-	BOOL e;
-	DWORD nread;
-	e = ReadFile(fhdl, buffer, num, &nread, NULL);
-	if (!e)
-	{
-		elog(ERROR, "ERROR: FileRead I/O failed, winerr=%d\n", GetLastError());
-		exit(1);
-	}
-	return nread;
+  //BOOL e;
+  DWORD nread;
+  fhdl.read(buffer, num);
+  /*
+    e = ReadFile(fhdl, buffer, num, &nread, NULL);
+    if (!e)
+    {
+    elog(ERROR, "ERROR: FileRead I/O failed, winerr=%d\n", GetLastError());
+    exit(1);
+    }
+  */
+  return nread;
 }
 
 DWORD file_write(FilePtr fhdl, Page buffer, long num)
 {
-	BOOL e;
-	DWORD nread;
-	e = WriteFile(fhdl, buffer, num, &nread, NULL);
-	if (!e && nread != num)
-	{
-		elog(ERROR, "ERROR: FileWrite I/O failed, winerr=%d\n", GetLastError());
-		exit(1);
-	}
-	return nread;
+  //BOOL e;
+  DWORD nread;
+  fhdl.write(buffer, num);
+  /*
+  e = WriteFile(fhdl, buffer, num, &nread, NULL);
+  if (!e && nread != num)
+    {
+      elog(ERROR, "ERROR: FileWrite I/O failed, winerr=%d\n", GetLastError());
+      exit(1);
+    }
+  */
+  return nread;
 }
 
+/*
 DWORD file_tryWrite(FilePtr fhdl, Page buffer, long num)
 {
 	BOOL e;
@@ -161,18 +183,23 @@ DWORD file_tryWrite(FilePtr fhdl, Page buffer, long num)
 	}
 	return nread;
 }
+*/
 
 void file_flush(FilePtr fhdl)
 {
 	BOOL e;
+	fflush(fhdl);
+	/*
 	e = FlushFileBuffers(fhdl);
 	if (!e)
 	{
 		elog(ERROR, "ERROR: FileFlush I/O failed, winerr=%d\n", GetLastError());
 		exit(1);
 	}
+	*/
 }
 
+/*
 void file_delete(FilePtr fhdlr, FilePtr fhdls, int fid)
 {
 	char path[256];
@@ -197,12 +224,17 @@ void file_delete(FilePtr fhdlr, FilePtr fhdls, int fid)
 	}
 
 }
+*/
 
 void file_delete(FilePtr fhdl, int fid)
 {
 	char path[256];
 	sprintf(path, "%s//%d.dat", DATAPATH, fid);
-
+	if (remove(path) != 0) {
+	  elog(ERROR, "ERROR: FileFlush I/O failed, winerr=%d\n");//, GetLastError());
+	  exit(1);	  
+	}
+	/*
 	if (CloseHandle(fhdl) == 0)
 	{
 		elog(ERROR, "ERROR: FileFlush I/O failed, winerr=%d\n", GetLastError());
@@ -214,9 +246,10 @@ void file_delete(FilePtr fhdl, int fid)
 		elog(ERROR, "ERROR: FileFlush I/O failed, winerr=%d\n", GetLastError());
 		exit(1);
 	}
+	*/
 
 }
-
+/*
 BOOL file_clearDataDir() 
 {  
 	WIN32_FIND_DATA finddata;  
@@ -263,3 +296,4 @@ BOOL file_clearDataDir()
 
 	return TRUE;
 }
+*/

@@ -793,7 +793,7 @@ int main( int argc,char* argv[])
 		goto reinput;
 	}
 
-	file_clearDataDir();
+	//file_clearDataDir();
 
 	switch(index)
 	{
