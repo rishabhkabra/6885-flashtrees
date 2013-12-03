@@ -1,30 +1,24 @@
 CXX=g++
-CFLAGS=-Wall -g
-LDFLAGS= -lm
-OBJS=storage.o buffer.o Timer.o btree.o error.o fdtree.o lruque.o main.o model.o pageTable.o
-ALL_TARGETS=fdtreetest
-CC=$(CXX)
+CXXFLAGS=-Wall -g
+LDFLAGS=
 
-CXXFLAGS=$(CFLAGS)
-SRCS=$(OBJS:.o=.cpp)
+PRODUCT=fdtreetest
+SOURCES = $(wildcard *.cpp)
+HEADERS = $(wildcard *.h)
+OBJECTS = $(patsubst %.cpp,%.o,$(SOURCES))
 
-all:depend $(ALL_TARGETS)
+all: 	$(PRODUCT)
 
-$(ALL_TARGETS): $(OBJS)
-	$(CXX) $(CFLAGS) $(LDFLAGS) -o $@ $(OBJS)
+%.o: 	%.cpp $(HEADERS)
+	$(CXX) $(CXXFLAGS) -o $@ -c $<
 
-	
-depend .depend dep:
-	$(CC) $(CFLAGS) -MM $(SRCS) > .depend
-
-#ifeq (.depend,$(wildcard .depend))
-#include .depend
-#endif
+$(PRODUCT): 	$(OBJECTS)
+		$(CXX) $(OBJECTS) $(LDFLAGS) -o $@
 
 clean: execclean objclean
 
 execclean: 
-	-rm -f $(ALL_TARGETS)
+	-rm -f $(PRODUCT)
 
 objclean:
 	-rm -f *.o .depend
