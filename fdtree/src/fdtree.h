@@ -136,10 +136,10 @@ int fdtree_search_next(FDTree * tree, Entry * e);
 int fdtree_insert(FDTree * tree, Entry entry);
 //int fdtree_insert(FDTree * tree, Entry entry, bool insertToPrimaryTree = true);
 int fdtree_delete(FDTree * tree, Entry entry);
-void fdtree_try(FDTree * tree, int lid);
-int fdtree_range_query(FDTree * tree, Key key1, Key key2);
-FDTree * fdtree_bulkload_data(long num, int r, bool deamortize, double * ratio);
-int fdtree_set_mbuf(int size);
+//void fdtree_try(FDTree * tree, int lid);
+//int fdtree_range_query(FDTree * tree, Key key1, Key key2);
+//FDTree * fdtree_bulkload_data(long num, int r, bool deamortize, double * ratio);
+//int fdtree_set_mbuf(int size);
 int fdtree_merge_data(FDTree * tree, int lid, double ratio, int range);
 
 int fdtree_checkfile(char * fname, unsigned int * num);
@@ -147,9 +147,9 @@ int fdtree_generatefile(char * fname, unsigned int num);
 int fdtree_checkLevel(FDTree * tree, int lid);
 
 //void fdtree_deamortizedInit(FDTree * tree);
-int fdtree_deamortized_insert(FDTree * tree, Entry entry);
+//int fdtree_deamortized_insert(FDTree * tree, Entry entry);
 //int fdtree_deamortizedDelete(FDTree * tree, Entry entry);
-int fdtree_deamortized_search(FDTree * tree, Key key);
+//int fdtree_deamortized_search(FDTree * tree, Key key);
 
 int fdmodel_estimate(int n, int memory, double p, char * fname);
 

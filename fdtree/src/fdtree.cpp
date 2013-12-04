@@ -70,11 +70,13 @@ int fdtree_deamortized_merge_init(FDTree * tree);
 int fdtree_deamortized_merge_step(FDTree * tree);
 int fdtree_deamortized_merge_finish(FDTree * tree);
 
+/*
 int fdtree_set_mbuf(int size)
 {
 	MAX_MBUF_NUM = size;
 	return size;
 }
+*/
 
 void fdtree_print(FDTree * tree)
 {
@@ -1257,6 +1259,7 @@ int fdtree_search_next(FDTree * tree, Entry * e)
 	return 1;
 }
 
+/*
 int fdtree_range_query(FDTree * tree, Key key1, Key key2)
 {
 	int i, j;
@@ -1377,6 +1380,7 @@ int fdtree_range_query(FDTree * tree, Key key1, Key key2)
 
 	return nRes;
 }
+*/
 
 /*
  *	fdtree_insert() -- 
@@ -1512,6 +1516,7 @@ int fdtree_checkfile(char * fname, unsigned int * num)
 	return FDTREE_SUCCESS;
 }
 
+/*
 void fdtree_try(FDTree * tree, int lid)
 {
 	Page page;
@@ -1521,4 +1526,4 @@ void fdtree_try(FDTree * tree, int lid)
 		printf("%d\n", PAGE_NUM(page));
 	}
 }
-
+*/
