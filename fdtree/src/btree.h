@@ -66,7 +66,7 @@ typedef struct BTreeState
 	struct BTreeState * nextState;	//only used for write
 } BTreeState;
 
-void btree_initEmpty(BTree * tree);
+//void btree_initEmpty(BTree * tree);
 BTreeState * btree_initEmptyState(BTree * tree);
 BTreeState * btree_initRead(BTree * tree, bool forceRead = false);
 Entry * btree_readNextEntry(BTreeState * state);
@@ -77,17 +77,17 @@ void btree_flush(BTreeState * state);
 BTree * btree_bulkload(unsigned int num, double initSpaceRate, char * fname);
 
 BlockNum btree_point_query(BTree * tree, Key key, Entry * entry = NULL);
-int btree_range_query(BTree * tree, Key key1, Key key2);
+//int btree_range_query(BTree * tree, Key key1, Key key2);
 int btree_insert(BTree * tree, Entry entry);
 int btree_delete(BTree * tree, Entry entry);
 int btree_update(BTree * tree, Key key, int val);
-int btree_update_pointer(BTree * tree, Entry * e);
-int btree_updateAdditionFence(BTree * tree);
-int btree_copyBTree(BTree * tree1, BTree * tree2);
+//int btree_update_pointer(BTree * tree, Entry * e);
+//int btree_updateAdditionFence(BTree * tree);
+//int btree_copyBTree(BTree * tree1, BTree * tree2);
 
 int btree_checkLevel(BTree * tree, int maxBlock);
-void btree_try(BTree * tree);
-void btree_printPageInfo(BTree * tree);
+//void btree_try(BTree * tree);
+//void btree_printPageInfo(BTree * tree);
 
 ///////////////////////////////////////////////
 /////////	internal routine		///////////

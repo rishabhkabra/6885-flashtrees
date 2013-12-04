@@ -233,6 +233,7 @@ BTreeState * btree_initEmptyState(BTree * tree)
 	return state;
 }
 
+/*
 void btree_initEmpty(BTree * tree)
 {
 	Page page;
@@ -274,7 +275,7 @@ void btree_initEmpty(BTree * tree)
 	tree->nInitEntry = tree->nEntry;
 
 	markDirty(tree->fid[0], 0);
-
+*/
 /*
 	state->type = B_TREE;
 	state->curOffset = 0;
@@ -287,7 +288,8 @@ void btree_initEmpty(BTree * tree)
 
 	return state;
 */
-}
+//}
+
 
 Entry * btree_readNextEntry(BTreeState * state)
 {
@@ -559,15 +561,17 @@ BTree * btree_bulkload(unsigned int num, double initSpaceRate, char * fname)
 	return tree;
 }
 
+/*
 void btree_try(BTree * tree)
 {
+*/
 	//Page page;
 	//for (int i = 0; i < tree->nBlock; i++)
 	//{
 	//	page = readPage(tree->fhdl, tree->fid, i);
 	//	printf("%d\n", PAGE_NUM(page));
 	//}
-}
+//}
 
 BlockNum btree_point_query(BTree * tree, Key key, Entry * entry)
 {
@@ -596,6 +600,7 @@ BlockNum btree_point_query(BTree * tree, Key key, Entry * entry)
 		return INVALID_PAGE;
 }
 
+/*
 int btree_range_query(BTree * tree, Key key1, Key key2)
 {
 	int i;
@@ -636,6 +641,7 @@ int btree_range_query(BTree * tree, Key key1, Key key2)
 	}
 	return num;
 }
+*/
 
 int btree_update(BTree * tree, Key key, int val)
 {
@@ -669,6 +675,7 @@ int btree_update(BTree * tree, Key key, int val)
 		return 0;
 }
 
+/*
 int btree_update_pointer(BTree * tree, Entry * e)
 {
 	int i, suc;
@@ -696,6 +703,7 @@ int btree_update_pointer(BTree * tree, Entry * e)
 	}
 	return suc;
 }
+*/
 
 void btree_split(BTree * tree, Page page, int level, int * trace)
 {
@@ -890,8 +898,10 @@ int btree_delete(BTree * tree, Entry entry)
 	return 0;
 }
 
+/*
 void btree_printPageInfo(BTree * tree)
 {
+*/
 /*	Page page;
 	PageHead * head;
 	int npage = tree->nBlock;
@@ -904,8 +914,9 @@ void btree_printPageInfo(BTree * tree)
 		printf("pid %d: pre %d, next %d, parent %d\n",head->pid, head->pre, head->next, head->parent);
 	}
 */
-}
+//}
 
+/*
 int btree_copyBTree(BTree * tree1, BTree * tree2)
 {
 	BTreeState * state;
@@ -930,35 +941,37 @@ int btree_copyBTree(BTree * tree1, BTree * tree2)
 	return 0;
 
 }
-
-int btree_updateAdditionFence(BTree * tree)
-{
-	BTreeState * state;
-	Entry * e;
-	int fence, num;
-
-	state = btree_initRead(tree);
-	fence = 0;
-	num = 0;
-	while(1)
+*/
+    /*
+    int btree_updateAdditionFence(BTree * tree)
+    {
+      BTreeState * state;
+      Entry * e;
+      int fence, num;
+      
+      state = btree_initRead(tree);
+      fence = 0;
+      num = 0;
+      while(1)
 	{
-		e = btree_readNextEntry(state);
-		if (e == NULL)
-			break;
-		num++;
-		if (ENTRY_IS_FENCE(e) && !ENTRY_IS_INTERNAL(e))
-		{
-			fence = ENTRY_GET_PTR(e) + 1;
-		}else if (ENTRY_IS_INTERNAL(e))
-		{
-			e->ptr = fence;
-			ENTRY_SET_INTERNAL(e);
-			assert(ENTRY_GET_PTR(e) != INVALID_PAGE);
-		}
+	  e = btree_readNextEntry(state);
+	  if (e == NULL)
+	    break;
+	  num++;
+	  if (ENTRY_IS_FENCE(e) && !ENTRY_IS_INTERNAL(e))
+	    {
+	      fence = ENTRY_GET_PTR(e) + 1;
+	    }else if (ENTRY_IS_INTERNAL(e))
+	    {
+	      e->ptr = fence;
+	      ENTRY_SET_INTERNAL(e);
+	      assert(ENTRY_GET_PTR(e) != INVALID_PAGE);
+	    }
 	}
-
-	return 0;
-}
+      
+      return 0;
+    }
+    */
 
 int btree_checkLevel(BTree * tree, int maxBlock)
 {
