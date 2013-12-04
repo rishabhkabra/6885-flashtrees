@@ -13,10 +13,9 @@
 typedef __int64 i64 ;
 #else
 /**
- * \typedef long long i64
  * \brief Maps the linux 64 bit integer to a uniform name
  */
-typedef long long i64;
+typedef long i64;
 #endif
 
 typedef struct CPerfCounterRec

@@ -50,9 +50,9 @@ typedef struct ModelDevice
 /* FD-tree level state structure */
 typedef struct ModelLevelState
 {
-	unsigned long long maxsize;
-	unsigned long long nsize;
-	unsigned long long nfence;
+	unsigned long maxsize;
+	unsigned long nsize;
+	unsigned long nfence;
 } ModelLevelState;
 
 /* FD-tree state structure */
@@ -62,7 +62,7 @@ typedef struct ModelIndexState
 	int l;
 	int f;
 	int k;
-	unsigned long long mem;
+	unsigned long mem;
 	double nRead;
 	double nWrite;
 	ModelLevelState states[FDMODEL_MAX_HEIGHT];
@@ -144,7 +144,7 @@ int fdmodel_merge(ModelIndexState * tree, int lid)
 double fdmodel_insert(ModelIndexState * tree, ModelDevice * device)
 {
 	int mergelevel;
-	unsigned long long ninsert;
+	unsigned long ninsert;
 	double cost;
 
 	/* initialize the accumulated cost of read/write */
@@ -176,12 +176,12 @@ double fdmodel_insert(ModelIndexState * tree, ModelDevice * device)
 double fdmodel_search(ModelIndexState * tree, ModelDevice * device)
 {
 	int memLevel;
-	unsigned long long memEntry;
+	unsigned long memEntry;
 	double cost;
 
 	memLevel = 1 + (int)floor(log((double)tree->mem / (tree->states[0].maxsize * sizeof(Entry)))
 		/log((double)tree->k));
-	memEntry = (unsigned long long)(tree->states[0].maxsize * pow((double)tree->k, (double)memLevel - 1));
+	memEntry = (unsigned long)(tree->states[0].maxsize * pow((double)tree->k, (double)memLevel - 1));
 	cost = (tree->l - memLevel - ((double)tree->mem - memEntry * sizeof(Entry))/(double)tree->states[memLevel].maxsize/sizeof(Entry)) 
 		* BLKSZ / device->bandwidth_rndr;
 

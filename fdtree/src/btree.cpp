@@ -1012,7 +1012,7 @@ int btree_checkLevel(BTree * tree, int maxBlock)
  */
 int btree_checkfile(char * fname, unsigned int * num)
 {
-	unsigned long long n = 0;
+	unsigned long n = 0;
 	Entry entry, last;
 	ifstream file;
 	

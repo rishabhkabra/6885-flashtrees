@@ -460,7 +460,7 @@ void btree_test(int n, int buffer_size, int num_query, int p_search, int p_inser
  */
 int generateFile(char * fname, unsigned int num)
 {
-	unsigned long long i = 0;
+	unsigned long i = 0;
 	Entry entry;
 	ofstream file;
 	

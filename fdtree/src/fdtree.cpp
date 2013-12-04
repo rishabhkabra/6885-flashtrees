@@ -1480,7 +1480,7 @@ int fdtree_delete(FDTree * tree, Entry entry)
  */
 int fdtree_checkfile(char * fname, unsigned int * num)
 {
-	unsigned long long n = 0;
+	unsigned long n = 0;
 	Entry entry, last;
 	FILE * file;
 	

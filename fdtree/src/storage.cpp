@@ -92,7 +92,7 @@ int file_close(FilePtr fhdl)
 	return 1;
 }
 
-void file_seek(FilePtr fhdl, long long offset)
+void file_seek(FilePtr fhdl, long offset)
 {
   if (lseek(fhdl, offset, SEEK_SET) == -1)
     {

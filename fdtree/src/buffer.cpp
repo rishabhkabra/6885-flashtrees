@@ -301,6 +301,9 @@ Page readPage(HANDLE fhdl, int fid, BlockNum offset)
 	nRead = file_read(fhdl, page, BLKSZ);
 	
 	assert(nRead == BLKSZ);
+	if (PAGE_PID(pages[id]) != offset) {
+	  printf("PAGE_PID = %ld, offset = %ld", PAGE_PID(pages[id]), offset);
+	}
 	assert(PAGE_PID(pages[id]) == offset);
 
 	return page;
