@@ -530,69 +530,42 @@ int generateQuery(char * fname, int n)
 
 int checkquery(char * fname, unsigned int * num, double * psearch, double * pinsert, double * pdelete, double * pupdate)
 {
-	FILE * file;
-	char c;
-	unsigned int key, ptr;
-	unsigned int nsearch, ninsert, ndelete, nupdate, nopt;
+  std::ifstream in(fname);
+  if (!in) {
+    return FDTREE_FAILED;
+  }
+  char c;
+  unsigned int key, ptr;
+  unsigned int nsearch, ninsert, ndelete, nupdate, nopt;
+  nsearch = ninsert = ndelete = nupdate = 0;
 
-	file = fopen(fname, "r");
-	if (file == 0)
-		return FDTREE_FAILED;
+  while(in>>c>>key) {
+    *num += 1;
+    if (c == 's') {
+      nsearch++;
+    }
+    if (c == 'i') {
+      ninsert++;
+      in>>ptr;
+    }
+    if (c == 'd') {
+      ndelete++;
+    }
+    if (c == 'u') {
+      nupdate++;
+      in>>ptr;
+    } 
+    //printf("%c %d %d\n", c, key, ptr);
+  }
 
-	*num = 0;
-	nsearch = ninsert = ndelete = nupdate = 0;
-	while(1)
-	{
-		if (fscanf(file, "%c", &c) < 1)
-		{
-			if (feof(file))
-				break;
-
-			elog(ERROR, "wrong query file format\n");
-			return FDTREE_FAILED;
-		}
-
-		if (fscanf(file, "%u", &key) < 1)
-		{
-			elog(ERROR, "wrong query file format\n");
-			return FDTREE_FAILED;
-		}
-
-		if (c == 's')
-		{
-			nsearch ++;
-		}
-		else if (c == 'i')
-		{
-			ninsert++;
-			fscanf(file, "%u", &ptr);
-		}
-		else if (c == 'd')
-		{
-			ndelete++;
-		}
-		else if (c == 'u')
-		{
-			nupdate++;
-			fscanf(file, "%u", &ptr);
-		}
-		else
-		{
-			elog(ERROR, "wrong query file format\n");
-			return FDTREE_FAILED;
-		}
-
-		fscanf(file, "%c", &c);
-		*num = *num + 1;
-	}
-
-	nopt = nsearch + ninsert + ndelete + nupdate;
-	*psearch = ((double)(nsearch))/nopt;
-	*pinsert = ((double)(ninsert))/nopt;
-	*pdelete = ((double)(ndelete))/nopt;
-	*pupdate = ((double)(nupdate))/nopt;
-
-	return FDTREE_SUCCESS;
+  in.close();
+  nopt = nsearch + ninsert + ndelete + nupdate;
+  *psearch = ((double)(nsearch))/nopt;
+  *pinsert = ((double)(ninsert))/nopt;
+  *pdelete = ((double)(ndelete))/nopt;
+  *pupdate = ((double)(nupdate))/nopt;
+  
+  return FDTREE_SUCCESS;
 }
 
 /*
