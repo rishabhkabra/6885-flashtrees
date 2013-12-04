@@ -1,4 +1,3 @@
-typedef void * PVOID;
 typedef int HANDLE;
-typedef unsigned long DWORD;
+typedef ssize_t DWORD;
 #define INVALID_HANDLE_VALUE -1
