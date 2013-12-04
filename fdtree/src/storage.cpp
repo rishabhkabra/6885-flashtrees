@@ -150,7 +150,7 @@ void file_delete(FilePtr fhdl, int fid)
 	
 }
 
-BOOL file_clearDataDir() 
+bool file_clearDataDir() 
 {  
   /*
 	WIN32_FIND_DATA finddata;  
@@ -195,5 +195,5 @@ BOOL file_clearDataDir()
 	//else
 	//	return FALSE;
 	*/
-	return 1;
+	return true;
 }
