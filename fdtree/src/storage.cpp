@@ -94,7 +94,7 @@ int file_close(FilePtr fhdl)
 
 void file_seek(FilePtr fhdl, long offset)
 {
-  if (lseek(fhdl, offset, SEEK_SET) == -1)
+  if (lseek(fhdl, offset * BLKSZ, SEEK_SET) == -1)
     {
       elog(ERROR, "ERROR: SetFilePointerEx failed (error=%d)\n");//, GetLastError());
       exit(1);
