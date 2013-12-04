@@ -55,17 +55,17 @@ typedef struct FilePage
 } FilePage;
 
 int initBufPool(int size, bool force = false);
-void deletePagePool();
+//void deletePagePool();
 
 Page newPage(HANDLE fhdl, int fid, BlockNum offset);
 Page readPage(HANDLE fhdl, int fid, BlockNum offset);
 int	 writePage(HANDLE fhdl, int fid, BlockNum offset, Page page);
-void clearDirty(int fid, BlockNum offset);
+//void clearDirty(int fid, BlockNum offset);
 void markDirty(int fid, BlockNum offset);
-void flushAllDirtyPage();
+//void flushAllDirtyPage();
 void resetAllDirtyBit();
 
-void printBufStat();
-void initBufStat();
+//void printBufStat();
+//void initBufStat();
 
 #endif

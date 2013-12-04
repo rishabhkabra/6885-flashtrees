@@ -62,12 +62,14 @@ int stat_hit;
  *		free the space used by buffer management.
  */
 
+/*
 void deleteBufPool()
 {
 	delete [] pages[0];
 	delete [] pages;
 	delete [] pnodes;
 }
+*/
 
 /*
  * initBufPool() --
@@ -102,21 +104,19 @@ int initBufPool(int size, bool force)
 }
 
 /*
- * initBufStat() --
- *		initial the statitics info.
- */
-
 void initBufStat()
 {
 	stat_read = 0;
 	stat_hit = 0;
 }
+*/
 
 /*
  * printBufState() --
  *		print out the statitics info.
  */
 
+ /*
 void printBufStat()
 {
 	printf("#### buffer statistics info ####\n");
@@ -126,12 +126,14 @@ void printBufStat()
 	printf("  hit rate: %f\n", (float)stat_hit / stat_read);
 	printf("################################\n");
 }
+ */
 
 /*
  * ClearDirty() --
  *		Reset the dirty bit of a page.
  */
 
+  /*
 void clearDirty(int fid, BlockNum offset)
 {
 	FilePage fp;
@@ -143,6 +145,7 @@ void clearDirty(int fid, BlockNum offset)
 	if (id != NO_PAGE)
 		pnodes[id].dirty = 0;
 }
+  */
 
 /*
  * MarkDirty() --
@@ -171,10 +174,6 @@ void markDirty(int fid, BlockNum offset)
 }
 
 /*
- *	flushAllDirtyPage() -- 
- *		Write all dirty pages to disk.
- */
-
 void flushAllDirtyPage()
 {
 	int i;
@@ -187,6 +186,7 @@ void flushAllDirtyPage()
 		}
 	}
 }
+*/
 
 /*
  *	resetAllDirtyBit() -- 
@@ -312,7 +312,6 @@ Page readPage(HANDLE fhdl, int fid, BlockNum offset)
 /*
  *	writePage() -- 
  *	write a page in the buffer pool to disk.
- *	invoked by flushAllDirtyPage().
  */
 
 int	 writePage(HANDLE fhdl, int fid, BlockNum offset, Page page)
