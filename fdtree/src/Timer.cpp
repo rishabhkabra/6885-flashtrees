@@ -93,22 +93,14 @@ jurisdiction and venue of these courts.
 
 #include "Timer.h"
 #include <cstdio>
-
-#ifdef _WIN32
-#include <windows.h>
-#else
 #include <sys/time.h>
-#endif
+
 CPerfCounter a[5];
 void Setup(int i)
 {
     a[i]._clocks = 0;
     a[i]._start = 0;
-#ifdef _WIN32
-    QueryPerformanceFrequency((long *)&(a[i]._freq));
-#else
     a[i]._freq = 1000;
-#endif
     Reset(i);
 }
 
@@ -116,16 +108,9 @@ void
 Start(int i)
 {
 
-#ifdef _WIN32
-
-    QueryPerformanceCounter((long *)&(a[i]._start));
-
-#else
     struct timeval s;
     gettimeofday(&s, 0);
     a[i]._start = (i64)s.tv_sec * 1000 + (i64)s.tv_usec / 1000;
-
-#endif
 
 }
 
@@ -134,16 +119,9 @@ Stop(int i)
 {
     i64 n = 0;
 
-#ifdef _WIN32
-
-    QueryPerformanceCounter((long *)&n);
-
-#else
     struct timeval s;
     gettimeofday(&s, 0);
     n = (i64)s.tv_sec * 1000 + (i64)s.tv_usec / 1000;
-
-#endif
 
     n -= a[i]._start;
     a[i]._start = 0;
