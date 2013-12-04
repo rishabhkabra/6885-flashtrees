@@ -50,7 +50,7 @@
 
 struct FDTree;
 
-typedef struct FDLevel
+struct FDLevel
 {
 	int fid;	//file id
 	FilePtr fhdl;
@@ -60,9 +60,9 @@ typedef struct FDLevel
 	//statistics
 	int nMerge;
 	int nAccMerge;
-} FDLevel;
+};
 
-typedef struct FDLevelState
+struct FDLevelState
 {
 	int type;
 	FDTree * tree;
@@ -81,9 +81,9 @@ typedef struct FDLevelState
 	int nextFencePtr;
 	struct FDLevelState * nextState;	//only used for write
 	char buf[MBLKSZ];
-} FDLevelState;
+};
 
-typedef struct FDMergeState
+struct FDMergeState
 {
 	FDTree * tree;
 	int nMergeLevel;
@@ -96,17 +96,17 @@ typedef struct FDMergeState
 	Entry * e2;
 	int lid;
 	bool finish;
-} FDMergeState;
+};
 
-typedef struct FDTreeResultSet
+struct FDTreeResultSet
 {
 	int num;
 	Entry results[RESULT_SET_CAPACITY];
 	bool valid[RESULT_SET_CAPACITY];
 	struct FDTreeResultSet * next;
-} FDTreeResultSet;
+};
 
-typedef struct FDTree
+struct FDTree
 {
 	int n;
 	int k;	//size ratio
@@ -127,7 +127,7 @@ typedef struct FDTree
 	//for range search
 	BlockNum curPID;
 	int curOffset;
-} FDTree;
+};
 
 
 FDTree * fdtree_bulkload(unsigned int num, int k, char * fname);

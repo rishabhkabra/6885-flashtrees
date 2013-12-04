@@ -22,7 +22,7 @@
 
 #include "buffer.h"
 
-typedef struct LRUNode
+struct LRUNode
 {
 	int id;
 	int fileid;
@@ -31,14 +31,14 @@ typedef struct LRUNode
 	HANDLE fhdl;
 	struct LRUNode * next;
 	struct LRUNode * pre;
-} LRUNode;
+};
 
-typedef struct LRUQue
+struct LRUQue
 {
 	int num;
 	LRUNode * front;
 	LRUNode * back;
-} LRUQue;
+};
 
 LRUQue * LRUque_init(LRUNode * array, int n);
 int LRUque_pushBack(LRUQue * que, LRUNode * item);

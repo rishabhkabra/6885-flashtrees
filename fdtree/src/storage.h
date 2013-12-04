@@ -34,11 +34,11 @@ typedef int Key;
 
 #define MAX_KEY_VALUE 2147483647
 
-typedef struct Entry
+struct Entry
 {
 	Key key;
 	BlockNum ptr;
-} Entry;
+};
 
 ////////////////////////////////////////////////////
 //////		Page Control			////////////////
@@ -52,16 +52,16 @@ typedef struct Entry
 
 typedef char * Page;
 
-typedef struct PageHead
+struct PageHead
 {
-	BlockNum next;
-	BlockNum pre;
-	int level;
-	int flag;
-	int num;
-	int parent;
-	int pid;
-} PageHead;
+  BlockNum next;
+  BlockNum pre;
+  int level;
+  int flag;
+  int num;
+  int parent;
+  int pid;
+};
 
 #define PAGE_HEAD(page) ((PageHead *)page)
 #define PAGE_HEAD_SIZE sizeof(PageHead)

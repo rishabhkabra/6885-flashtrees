@@ -27,18 +27,18 @@
 #define BUCKET_SIZE 7999
 #define NO_PAGE -1
 
-typedef struct PageTableNode
+struct PageTableNode
 {
 	FilePage page;
 	int bid;
 	PageTableNode * next;
-} PageTableNode;
+};
 
-typedef struct PageTable
+struct PageTable
 {
 	PageTableNode * bucket[BUCKET_SIZE];
 	int BuckeNum;
-} PageTable;
+};
 
 PageTable * pgtbl_init();
 int pgtbl_find( PageTable * table, FilePage * page);

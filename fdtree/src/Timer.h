@@ -18,12 +18,12 @@ typedef __int64 i64 ;
 typedef long i64;
 #endif
 
-typedef struct CPerfCounterRec
+struct CPerfCounter
 {
     i64 _freq;
     i64 _clocks;
     i64 _start;
-} CPerfCounter;
+};
 
 void Setup(int);
 

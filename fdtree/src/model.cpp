@@ -39,24 +39,24 @@ using namespace std;
 #define FDMODEL_MAX_HEIGHT 10
 
 /* Device infomation structure */
-typedef struct ModelDevice
+struct ModelDevice
 {
 	double bandwidth_rndr;
 	double bandwidth_rndw;
 	double bandwidth_seqr;
 	double bandwidth_seqw;
-} ModelDevice;
+};
 
 /* FD-tree level state structure */
-typedef struct ModelLevelState
+struct ModelLevelState
 {
 	unsigned long maxsize;
 	unsigned long nsize;
 	unsigned long nfence;
-} ModelLevelState;
+};
 
 /* FD-tree state structure */
-typedef struct ModelIndexState
+struct ModelIndexState
 {
 	int n;
 	int l;
@@ -66,7 +66,7 @@ typedef struct ModelIndexState
 	double nRead;
 	double nWrite;
 	ModelLevelState states[FDMODEL_MAX_HEIGHT];
-} ModelIndexState;
+};
 
 /*
  *	fdmodel_init() --

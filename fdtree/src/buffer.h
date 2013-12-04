@@ -48,11 +48,11 @@ typedef union BlockPoint
 	Page point;
 } BlockPoint;
 
-typedef struct FilePage
+struct FilePage
 {
-	int fileid;
-	BlockNum num;
-} FilePage;
+  int fileid;
+  BlockNum num;
+};
 
 int initBufPool(int size, bool force = false);
 //void deletePagePool();

@@ -28,43 +28,43 @@
 
 struct FDTree;
 
-typedef struct BTree
+struct BTree
 {
-	int fid[BTREE_MAX_LEVEL];	//file id
-	HANDLE fhdl[BTREE_MAX_LEVEL];
-	int levelBlock[BTREE_MAX_LEVEL];
-	int maxBlock;
-	int maxEntry;
-	int nEntry;
-	int nBlock;
-	int nLevel;
-	int root;
-	int nInitEntry;
-//	HANDLE hStateMutex;
-	char buf[MBLKSZ];
-} BTree;
+  int fid[BTREE_MAX_LEVEL];	//file id
+  HANDLE fhdl[BTREE_MAX_LEVEL];
+  int levelBlock[BTREE_MAX_LEVEL];
+  int maxBlock;
+  int maxEntry;
+  int nEntry;
+  int nBlock;
+  int nLevel;
+  int root;
+  int nInitEntry;
+  //	HANDLE hStateMutex;
+  char buf[MBLKSZ];
+};
 
-typedef struct BTreeState
+struct BTreeState
 {
-	int type;
-	FDTree * fdtree;
-	int fid;
-	HANDLE fhdl;
-	char buf[BLKSZ];
-	char mbuf[MBLKSZ];
-	Page curPage;
-
-	PageHead * curPageHead;
-	Entry * curEntries;
-	int curOffset;
-	BlockNum pid;
-	int level;						//0:leaf level, n: root
-	bool forceWrite;
-	bool forceRead;
-
-	struct BTree * tree;
-	struct BTreeState * nextState;	//only used for write
-} BTreeState;
+  int type;
+  FDTree * fdtree;
+  int fid;
+  HANDLE fhdl;
+  char buf[BLKSZ];
+  char mbuf[MBLKSZ];
+  Page curPage;
+  
+  PageHead * curPageHead;
+  Entry * curEntries;
+  int curOffset;
+  BlockNum pid;
+  int level;						//0:leaf level, n: root
+  bool forceWrite;
+  bool forceRead;
+  
+  struct BTree * tree;
+  struct BTreeState * nextState;	//only used for write
+};
 
 //void btree_initEmpty(BTree * tree);
 BTreeState * btree_initEmptyState(BTree * tree);
