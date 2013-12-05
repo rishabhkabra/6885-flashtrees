@@ -277,6 +277,7 @@ Page readPage(HANDLE fhdl, int fid, BlockNum offset)
 	//don't resident in buffers
 	FilePage ofp;
 
+	assert(pque->front);
 	id = LRUque_pushBack(pque, pque->front);
 	if (pnodes[id].dirty == true)
 	{
@@ -302,7 +303,7 @@ Page readPage(HANDLE fhdl, int fid, BlockNum offset)
 	
 	assert(nRead == BLKSZ);
 	if (PAGE_PID(pages[id]) != offset) {
-	  printf("PAGE_PID = %ld, offset = %ld", PAGE_PID(pages[id]), offset);
+	  printf("id: %d, pages[id]: %p, PAGE_PID = %d, offset = %ld\n", id, pages[id], PAGE_PID(pages[id]), offset);
 	}
 	assert(PAGE_PID(pages[id]) == offset);
 

@@ -46,7 +46,7 @@
 
 #define FDTREE_SLEEP_INTERVAL (100)
 
-#define RANDOM() ((rand() << 15) + rand())
+#define RANDOM() (rand())
 
 struct FDTree;
 
