@@ -48,7 +48,7 @@ FilePtr file_open(int fid, bool isExist)
 {
 	char path[256];
 	sprintf(path, "%s/%d.dat", DATAPATH, fid);
-	printf("opening file %s\n", path);
+	//printf("opening file %s\n", path);
 	
 	HANDLE fhdl;
 	//FILE* fp = fopen(path, "r");

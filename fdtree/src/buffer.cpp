@@ -223,7 +223,7 @@ Page newPage(HANDLE fhdl, int fid, BlockNum offset)
 	if (pnodes[id].dirty == true)
 	{
 		//write the dirty page
-		printf("flush dirty page [%d@file %d]\n", pnodes[id].num, pnodes[id].fileid);
+		//printf("flush dirty page [%d@file %d]\n", pnodes[id].num, pnodes[id].fileid);
 		writePage(pnodes[id].fhdl, pnodes[id].fileid, pnodes[id].num, pages[id]);
 
 		pnodes[id].dirty = false;
@@ -282,7 +282,7 @@ Page readPage(HANDLE fhdl, int fid, BlockNum offset)
 	if (pnodes[id].dirty == true)
 	{
 		//write the dirty page
-		printf("flush dirty page [%d@file %d]\n", pnodes[id].num, pnodes[id].fileid);
+		//printf("flush dirty page [%d@file %d]\n", pnodes[id].num, pnodes[id].fileid);
 		writePage(pnodes[id].fhdl, pnodes[id].fileid, pnodes[id].num, pages[id]);
 
 		pnodes[id].dirty = false;
