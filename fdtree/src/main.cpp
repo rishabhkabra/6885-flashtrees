@@ -198,7 +198,7 @@ void fdtree_test_load(int n, int buffer_size, int l, int k, char * fname)
 	Entry entry;
 	char c;
 	int err;
-	FILE * file;
+	//FILE * file;
 
 	err = checkquery(fname, &num_query, &psearch, &pinsert, &pdelete, &pupdate);
 	if (err == FDTREE_FAILED)
@@ -256,81 +256,66 @@ void fdtree_test_load(int n, int buffer_size, int l, int k, char * fname)
 	Setup(4);	//accumulated update time
 	Reset(4);
 
-	file = fopen(fname, "r");
-	if (file == NULL)
-		return;
+	std::ifstream in(fname);
+	if (!in) {
+	  return;
+	}
+	
+	printf("successfully opened %s\n", fname);
 
 	Start(0);
 	//loop until the last level is updated
 	for (i = 0; i < num_query; i++)
 	{
-		if (fscanf(file, "%c", &c) < 1)
-			return;
-
-		if (c == 's')
-		{
-			//search
-			nSearch++;
-			if (fscanf(file, "%u", &key) < 1)
-				return;
-			Start(1);
-			ret = fdtree_point_search(tree, key);
-			Stop(1);
-			if (ret == 0)
-				elog(DEBUG2, "key %u not found.\n", key);
-			
-			fscanf(file, "%c", &c);
-		}
-		else if (c == 'i')
-		{
-			//insertion
-			nInsert++;
-			if (fscanf(file, "%u", &(entry.key)) < 1)
-				return;
-			if (fscanf(file, "%u", &(entry.ptr)) < 1)
-				return;
-			Start(2);
-			fdtree_insert(tree, entry);
-			Stop(2);
-
-			fscanf(file, "%c", &c);
-		}
-		else if (c == 'd')
-		{
-			nDelete++;
-			if (fscanf(file, "%u", &(entry.key)) < 1)
-				return;
-			Start(3);
-			ret = fdtree_point_search(tree, key, &entry);
-			if (ret != 0)
-				fdtree_delete(tree, entry);
-			Stop(3);
-
-			fscanf(file, "%c", &c);
-		}
-		else
-		{
-			nUpdate++;
-			if (fscanf(file, "%u", &key) < 1)
-				return;
-
-			Start(4);
-			ret = fdtree_point_search(tree, key, &entry);
-			if (ret != 0)
-				fdtree_delete(tree, entry);
-
-			if (fscanf(file, "%u", &(entry.ptr)) < 1)
-				return;
-			fdtree_insert(tree, entry);
-			Stop(4);
-
-			fscanf(file, "%c", &c);
-		}
+	  in>>c>>key;
+	  switch(c) {
+	  case 's':
+	    //printf("c and key: %c, %d\n", c, key);
+	    nSearch++;
+	    Start(1);
+	    ret = fdtree_point_search(tree, key);
+	    Stop(1);
+	    if (ret == 0) {
+	      elog(DEBUG2, "key %u not found.\n", key);
+	    }
+	    break;
+	  case 'i':
+	    //printf("c and key: %c, %d\n", c, key);
+	    nInsert++;
+	    in>>(entry.ptr);
+	    entry.key = key;
+	    Start(2);
+	    fdtree_insert(tree, entry);
+	    Stop(2);
+	    break;
+	  case 'd':
+	    //printf("c and key: %c, %d\n", c, key);
+	    nDelete++;
+	    entry.key = key;
+	    Start(3);
+	    ret = fdtree_point_search(tree, key, &entry);
+	    if (ret != 0) {
+	      fdtree_delete(tree, entry);
+	    }
+	    Stop(3);
+	    break;
+	  case 'u':
+	    //printf("c and key: %c, %d\n", c, key);
+	    nUpdate++;
+	    entry.key = key;
+	    in>>(entry.ptr);
+	    Start(4);
+	    ret = fdtree_point_search(tree, key, &entry);
+	    if (ret != 0)
+	      fdtree_delete(tree, entry);
+	    fdtree_insert(tree, entry);
+	    Stop(4);
+	    break;
+	  }
 	}
-
 	Stop(0);
 
-	fclose(file);
+	in.close();
 
 	elog(INFO, "tree size: %d, k: %d, level: %d\n", n, tree->k, tree->nLevel);
 	elog(INFO, "number of insertion: %d\n", nInsert);
