@@ -76,7 +76,9 @@ struct traceMetadata_t{
 traceMetadata_t(char* diskFile, int pageSize, bool directFlag, address_t firstWriteAddress, bool doLogging, bool onlyTracing) : BUF_SIZE(pageSize), fd(-1), curpage(0), writebuffer(NULL), bufSize(0), maxPageWritten(-1), directFlag(directFlag), readbuffer(NULL), doLogging(doLogging), onlyTracing(onlyTracing), ioTimeSoFar(0), ioCounters(pageSize) {
   address_t numblocks = 0;
   char cmdBuf[512];
-  
+
+  printf("direct flag: %d\n", directFlag);  
+
   snprintf(cmdBuf, sizeof(cmdBuf), SETRA_COMMAND, diskFile);
   fprintf(stderr, "\nRunning %s", cmdBuf);
   //system(cmdBuf);
@@ -88,9 +90,9 @@ traceMetadata_t(char* diskFile, int pageSize, bool directFlag, address_t firstWr
   writebuffer = (unsigned char*)(getPageAlignedBuffer(16384, NULL));
   readbuffer = (unsigned char*)(getPageAlignedBuffer(16384, NULL));
   memset(writebuffer, 0xa1, 16384);
-  printf("opening %s\n", diskFile);
-  
-  fd = open(diskFile, O_RDONLY);// | (directFlag ? O_DIRECT : 0));
+
+  fd = open(diskFile, O_RDWR);// | (directFlag ? O_DIRECT : 0));
+  printf("opened %s with file descriptor %d\n", diskFile, fd);
   assert(fd >= 0);
   int retval = 0;
   numblocks = 712890496;//ioctl(fd, BLKGETSIZE, &numblocks);
@@ -111,7 +113,9 @@ traceMetadata_t(char* diskFile, int pageSize, bool directFlag, address_t firstWr
   
   void doRawWrite(address_t pageToWrite, int toWrite){
     assert(toWrite >= 0 && toWrite <= BUF_SIZE);
-    int bToWrite = directFlag ? BUF_SIZE : toWrite;
+    //int bToWrite = directFlag ? BUF_SIZE : toWrite;
+    int bToWrite = toWrite;
+    printf("bToWrite: %d,  BUF_SIZE: %d, toWrite: %d\n", bToWrite, BUF_SIZE, toWrite);
     assert(pageToWrite >= 0 && pageToWrite < size);
     address_t seekPos = pageToWrite * BUF_SIZE;
     if (onlyTracing){
@@ -123,6 +127,7 @@ traceMetadata_t(char* diskFile, int pageSize, bool directFlag, address_t firstWr
       assert(ret == seekPos);
       double t = nowTime();
       ret = write(fd, writebuffer, bToWrite);
+      printf("ret = %d\n", ret);
       assert(ret == bToWrite);
       ioTimeSoFar += (nowTime() - t);
       ioCounters.processOp(pageToWrite, WRITE_OP);
