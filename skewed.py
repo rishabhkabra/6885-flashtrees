@@ -31,10 +31,12 @@ def skew_trace(ltu, num_queries, num_elements, range_keys):
       if inserts > 0:
         inserts -= 1
         k = random.randint(0, range_keys)
-        index = k  % (range_keys/10)
+#        print "value: %d, mod: %d" % ( k, range_keys/10)
+        index = min(9,k / (range_keys/10))
+#        print "Index", index
         keys[index].append(k)
         query_file.write("i %d %d\n" %(k,random.randint(1000, 938243)))
-  print "Tree initialized with %d entries" % count   
+#  print "Tree initialized with %d entries" % count   
     
 
 skew_trace(float(sys.argv[1]), int(sys.argv[2]), int(sys.argv[3]), int(sys.argv[4]))
