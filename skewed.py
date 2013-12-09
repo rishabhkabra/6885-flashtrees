@@ -4,7 +4,9 @@ import sys
 
 def skew_trace(ltu, num_queries, num_elements, range_keys):
   data_file = open("in.dat", 'w')
+  la_file = open("la.dat", 'w')
   query_file = open("query.dat", 'w')
+  la_query = open("la_query.dat", 'w')
   keys = []
   count = 0
   for i in range(10):
@@ -14,6 +16,7 @@ def skew_trace(ltu, num_queries, num_elements, range_keys):
       x = random.randint(i*range_keys/10, (i+1)*range_keys/10)
       keys[i].append(x)
       data_file.write("%d %d " % (x,random.randint(1000, 938243)))
+      la_file.write("1 %d\n" % x)
   lookups = ltu*num_queries
   inserts = num_queries - lookups
   for i in range(num_queries):
@@ -26,6 +29,7 @@ def skew_trace(ltu, num_queries, num_elements, range_keys):
       except:
         num = random.randint(0, range_keys)
       query_file.write("s %d\n" % num) 
+      la_query.write("0 %d\n" % num)
       lookups -= 1
     else:
       if inserts > 0:
@@ -36,6 +40,7 @@ def skew_trace(ltu, num_queries, num_elements, range_keys):
 #        print "Index", index
         keys[index].append(k)
         query_file.write("i %d %d\n" %(k,random.randint(1000, 938243)))
+        la_query.write("1 %d\n" % k)
 #  print "Tree initialized with %d entries" % count   
     
 
